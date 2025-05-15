@@ -10,11 +10,11 @@
     <div class="container">
       <h2>Registration Form</h2>
       <form action="/submit" method="POST">
-        <label for="fullname">First name</label>
-        <input type="text" id="fullname" name="fullname" required />
+        <label for="firstname">First name</label>
+        <input type="text" id="firstname" name="firstname" required />
 
-        <label for="fullname">Last name</label>
-        <input type="text" id="fullname" name="fullname" required />
+        <label for="lastname">Last name</label>
+        <input type="text" id="lastname" name="lastname" required />
 
         <label for="email">E-mail</label>
         <input type="email" id="email" name="email" required />
