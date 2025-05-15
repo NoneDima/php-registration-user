@@ -13,3 +13,35 @@ services:
       WWWUSER: "${WWWUSER}"
     volumes:
       - ".:/var/www/html"
+    networks:
+      - test-network
+  mysql:
+    image: "mysql/mysql-server:8.0"
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - "mysql:/var/lib/mysql"
+      - "./docker/create-testing-database.sh:/docker-entrypoint-initdb.d/10-create-testing-database.sh"
+    networks:
+      - test-network
+    healthcheck:
+      test:
+        - CMD
+        - mysqladmin
+        - ping
+        - "-p${DB_PASSWORD}"
+      retries: 3
+      timeout: 5s
+networks:
+  test-network:
+    driver: bridge
+volumes:
+  mysql:
+    driver: local
