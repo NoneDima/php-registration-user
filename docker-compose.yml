@@ -1,0 +1,15 @@
+services:
+  php.test:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+      args:
+        WWWGROUP: "${WWWGROUP}"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "${APP_PORT:-9000}:80"
+    environment:
+      WWWUSER: "${WWWUSER}"
+    volumes:
+      - ".:/var/www/html"
