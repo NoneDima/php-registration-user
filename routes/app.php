@@ -8,20 +8,39 @@ function wrapper($file_path){
 
 try {
     $routes = [
-        '/hello' => wrapper('app/Views/Hello/HelloView.php'),
+        '/hello' => wrapper('app/Views/Hello/index.php'),
+        '/login' => function() {
+            header('Content-Type: text/html; charset=UTF-8');
+            
+            wrapper('app/Controllers/RegistrationController.php')();
+
+            \app\Controllers\RegistrationController::showLoginForm();
+        },
+        '/welcome' => function() {
+            header('Content-Type: text/html; charset=UTF-8');
+
+            wrapper('app/Views/Welcome/index.php')();
+        },
         '/registration' => function() {
             header('Content-Type: text/html; charset=UTF-8');
             
             wrapper('app/Controllers/RegistrationController.php')();
 
-            \app\Controllers\RegistrationController::view();
+            \app\Controllers\RegistrationController::showRegistrationForm();
         },
-        '/submit' => function() {
-            header('Content-Type: text/html; charset=UTF-8');
-            
+        '/auth' => function() {
             wrapper('app/Controllers/RegistrationController.php')();
 
-            \app\Controllers\RegistrationController::edit();
+            \app\Controllers\RegistrationController::authenticateUser();
+
+            header('Location: http://localhost:9020/welcome');
+        },
+        '/submit' => function() {
+            wrapper('app/Controllers/RegistrationController.php')();
+
+            \app\Controllers\RegistrationController::registerUser();
+
+            header('Location: http://localhost:9020/welcome');
         },
         '/css/style.css' => function() {
             header('Content-Type: text/css; charset=UTF-8');

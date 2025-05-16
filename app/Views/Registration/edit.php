@@ -9,17 +9,26 @@
   <body>
     <div class="container">
       <h2>Registration Form</h2>
-      <form action="/auth" method="POST">
+      <form action="/submit" method="POST">
+        <label for="firstname">First name</label>
+        <input type="text" id="firstname" name="firstname" required />
+
+        <label for="lastname">Last name</label>
+        <input type="text" id="lastname" name="lastname" required />
+
         <label for="email">E-mail</label>
         <input type="email" id="email" name="email" required />
+
+        <label for="phone">Mobile phone</label>
+        <input type="tel" id="phone" name="phone" required />
 
         <label for="password">Password</label>
         <input type="password" id="password" name="password" required />
 
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
       <div class="form-footer">
-        <p>Don't have an account? <a href="/registration">Registration here</a></p>
+        <p>Already have an account? <a href="/login">Login here</a></p>
       </div>
     </div>
   </body>
