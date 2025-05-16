@@ -31,12 +31,40 @@ try {
         '/auth' => function() {
             wrapper('app/Controllers/RegistrationController.php')();
 
+            $email = $_POST["email"];
+            $password = $_POST["password"];
+
+            $errors = \app\Controllers\ValidationController::validateAuthUser($email, $password);
+
+            if(is_array($errors)){
+                header('Content-Type: text/json; charset=UTF-8');
+                
+                echo json_encode($errors);
+                return false;
+            }
+
             \app\Controllers\RegistrationController::authenticateUser();
 
             header('Location: http://localhost:9020/welcome');
         },
         '/register' => function() {
             wrapper('app/Controllers/RegistrationController.php')();
+            wrapper('app/Controllers/ValidationController.php')();
+
+            $fullname = $_POST["firstname"];
+            $lastname = $_POST["lastname"];
+            $email = $_POST["email"];
+            $password = $_POST["password"];
+            $phone = $_POST["phone"];
+
+            $errors = \app\Controllers\ValidationController::validateRegisterUser($fullname, $lastname, $email, $password, $phone);
+
+            if(is_array($errors)){
+                header('Content-Type: text/json; charset=UTF-8');
+                
+                echo json_encode($errors);
+                return false;
+            }
 
             \app\Controllers\RegistrationController::registerUser();
 

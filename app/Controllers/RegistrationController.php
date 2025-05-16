@@ -13,13 +13,8 @@ class RegistrationController {
         return require "app/Views/Registration/index.php";
     }
 
-    public static function registerUser(){
+    public static function registerUser($fullname, $lastname, $email, $phone, $password){
         $user = new \app\Models\Users();
-        $fullname = $_POST["firstname"];
-        $lastname = $_POST["lastname"];
-        $email = $_POST["email"];
-        $phone = $_POST["phone"];
-        $password = $_POST["password"];
 
         $values = self::parseRegistration($fullname, $lastname, $email, $phone, $password);
 
