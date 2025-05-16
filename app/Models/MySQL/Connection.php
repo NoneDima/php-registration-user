@@ -40,6 +40,12 @@ class Connection {
         return mysqli_execute_query($connection->_conn, $query, $params);
     }
 
+    public static function execute_multi($query, $params = []){
+        $connection = self::getConnection();
+
+        return mysqli_multi_query($connection->_conn, $query, $params);
+    }
+
     public static function lastInsertId(){
         if(self::$connection){
             return mysqli_insert_id(self::$connection->_conn);

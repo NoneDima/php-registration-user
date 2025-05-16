@@ -1,6 +1,6 @@
-DROP DATABASE IF EXISTS testforeign;
-CREATE DATABASE testforeign;
-USE testforeign;
+DROP DATABASE IF EXISTS <?= $database ?>;
+CREATE DATABASE <?= $database ?>;
+USE <?= $database ?>;
 
 CREATE TABLE CatalogPhone (
   id int NOT NULL,
@@ -42,4 +42,4 @@ INSERT INTO CatalogPhone (id, name) VALUES (1, 'Users');
 
 INSERT INTO Users (FirstName, LastName, Email, Password, id_phone) VALUES ('<?= $current_user ?>', '<?= $current_user ?>', '<?= $current_user ?>@gmail.com', "Don\'t protected password", NULL);
 
-GRANT ALL PRIVILEGES ON testforeign.* TO '<?= $current_user ?>'@'%';
+GRANT ALL PRIVILEGES ON <?= $database ?>.* TO '<?= $current_user ?>'@'%';

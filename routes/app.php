@@ -43,7 +43,7 @@ try {
                 return false;
             }
 
-            \app\Controllers\RegistrationController::authenticateUser();
+            \app\Controllers\RegistrationController::authenticateUser($email, $password);
 
             header('Location: http://localhost:9020/welcome');
         },
@@ -66,7 +66,7 @@ try {
                 return false;
             }
 
-            \app\Controllers\RegistrationController::registerUser();
+            \app\Controllers\RegistrationController::registerUser($fullname, $lastname, $email, $password, $phone);
 
             header('Location: http://localhost:9020/welcome');
         },

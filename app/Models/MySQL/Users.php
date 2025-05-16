@@ -34,10 +34,13 @@ class Users {
     public function insertUser($array){
         $str_columns = "(";
         $str_values = "(";
+        $values = [];
+        
         $i = 0;
         foreach($array as $column => $value){
             $str_columns .= $column;
-            $str_values .= $value;
+            $str_values .= "?";
+            array_push($values, $value);
 
             if(++$i == count($array)){
                 $str_columns .= ")";
@@ -50,7 +53,7 @@ class Users {
 
         $query = "INSERT INTO {$this->tableName} $str_columns VALUES $str_values;";
 
-        Connection::execute($query);
+        Connection::execute($query, $values);
 
         return Connection::lastInsertId();
     }

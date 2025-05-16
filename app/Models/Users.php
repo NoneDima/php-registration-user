@@ -5,6 +5,10 @@ require_once __DIR__ . '/MySQL/PhoneNumbers.php';
 require_once __DIR__ . '/MySQL/Users.php';
 require_once __DIR__ . '/MySQL/Connection.php';
 
+use app\Models\MySQl\Users as UsersMySQL;
+use app\Models\MySQl\PhoneNumbers;
+use app\Models\MySQl\Connection;
+
 class Users {
     protected $columns = [
         "id",
@@ -19,8 +23,8 @@ class Users {
     protected $phonesModel;
 
     public function __construct(){
-        $this->usersModel = new \app\Models\MySQl\Users();
-        $this->phonesModel = new \app\Models\MySQl\PhoneNumbers();
+        $this->usersModel = new UsersMySQL();
+        $this->phonesModel = new PhoneNumbers();
     }
 
     public function updateById($id, $array){
@@ -37,12 +41,16 @@ class Users {
         ]);
         
         return $user->insertUser([
-            "FirstName" => "'test'",
-            "LastName" => "'test'", 
-            "Email" => "'Test@gmail.com'", 
-            "Password" => "\"Don\'t protected password\"",
+            "FirstName" => $array["FirstName"],
+            "LastName" => $array["LastName"], 
+            "Email" => $array["Email"],
+            "Password" => $this->hashPassword($array["Password"]),
             "id_phone" => $id_phone
         ]);
+    }
+
+    private function hashPassword($password){
+        return md5($password);
     }
 
     public function get($id){
@@ -51,7 +59,7 @@ class Users {
 
         $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1 and $t1.id = $id;";
         
-        return \app\Models\MySQl\Connection::execute($query);
+        return Connection::execute($query);
     }
 
     public function list(){
@@ -60,7 +68,7 @@ class Users {
 
         $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1;";
         
-        return \app\Models\MySQl\Connection::execute($query);
+        return Connection::execute($query);
     }
 
     public function consoleList(){

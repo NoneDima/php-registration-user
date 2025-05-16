@@ -4,6 +4,8 @@ namespace app\Controllers;
 
 require 'app/Models/Users.php';
 
+use app\Models\Users;
+
 class RegistrationController {
     public static function showRegistrationForm(){
         return require "app/Views/Registration/edit.php";
@@ -13,10 +15,10 @@ class RegistrationController {
         return require "app/Views/Registration/index.php";
     }
 
-    public static function registerUser($fullname, $lastname, $email, $phone, $password){
-        $user = new \app\Models\Users();
+    public static function registerUser($fullname, $lastname, $email, $password, $phone){
+        $user = new Users();
 
-        $values = self::parseRegistration($fullname, $lastname, $email, $phone, $password);
+        $values = self::parseRegistration($fullname, $lastname, $email, $password, $phone);
 
         $result = $user->insert($values);
 
@@ -24,11 +26,11 @@ class RegistrationController {
     }
 
     public static function authenticateUser(){
-        $user = new \app\Models\Users();
+        $user = new Users();
         $email = $_POST["email"];
         $password = $_POST["password"];
 
-        $values = self::parseLogin($fullname, $lastname, $email, $phone, $password);
+        $values = self::parseLogin($fullname, $lastname, $email, $password, $phone);
 
         $result = $user->get($values);
 
@@ -37,17 +39,17 @@ class RegistrationController {
 
     private static function parseLogin($email, $password){
         return [
-            "Email" => "'$email'",
-            "Password" => "'$password'"
+            "Email" => $email,
+            "Password" => $password
         ];
     }
 
-    private static function parseRegistration($fullname, $lastname, $email, $phone, $password){
+    private static function parseRegistration($fullname, $lastname, $email, $password, $phone){
         return [
-            "FirstName" => "'$fullname'",
-            "LastName" => "'$lastname'",
-            "Email" => "'$email'",
-            "Password" => "'$password'",
+            "FirstName" => $fullname,
+            "LastName" => $lastname,
+            "Email" => $email,
+            "Password" => $password,
             "PhoneNumber" => $phone
         ];
     }
