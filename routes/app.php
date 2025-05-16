@@ -35,7 +35,7 @@ try {
 
             header('Location: http://localhost:9020/welcome');
         },
-        '/submit' => function() {
+        '/register' => function() {
             wrapper('app/Controllers/RegistrationController.php')();
 
             \app\Controllers\RegistrationController::registerUser();

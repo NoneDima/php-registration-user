@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <h2>Registration Form</h2>
-      <form action="/submit" method="POST">
+      <form action="/register" method="POST">
         <label for="firstname">First name</label>
         <input type="text" id="firstname" name="firstname" required />
 
