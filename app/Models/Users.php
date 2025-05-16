@@ -1,72 +1,70 @@
 <?php
 
 namespace app\Models;
-require 'Connection.php';
+require_once __DIR__ . '/MySQL/PhoneNumbers.php';
+require_once __DIR__ . '/MySQL/Users.php';
+require_once __DIR__ . '/MySQL/Connection.php';
 
 class Users {
-    public $columns = [
+    protected $columns = [
         "id",
         "FirstName", 
         "LastName", 
         "Email", 
         "Password", 
-        "id_phone"
+        "PhoneNumber"
     ];
 
-    public $tableName = "Users";
+    protected $usersModel;
+    protected $phonesModel;
 
-    public function updateUserById($id, $array){
-        $str_content = "";
-        $i = 0;
-        foreach($array as $column => $value){
-            if(++$i == count($array)){
-                $str_content .= "$column = $value";
-            } else {
-                $str_content .= "$column = $value, ";
-            }
-        }
-
-        $query = "UPDATE {$this->tableName} SET $str_content WHERE id = $id;";
-
-        return Connection::execute($query);
+    public function __construct(){
+        $this->usersModel = new \app\Models\MySQl\Users();
+        $this->phonesModel = new \app\Models\MySQl\PhoneNumbers();
     }
 
-    public function insertUser($array){
-        $str_columns = "(";
-        $str_values = "(";
-        $i = 0;
-        foreach($array as $column => $value){
-            $str_columns .= $column;
-            $str_values .= $value;
-
-            if(++$i == count($array)){
-                $str_columns .= ")";
-                $str_values .= ")";
-            } else {
-                $str_columns .= ", ";
-                $str_values .= ", ";
-            }
-        }
-
-        $query = "INSERT INTO {$this->tableName} $str_columns VALUES $str_values;";
-
-        return Connection::execute($query);
-    }
-
-    public function getUser($id){
-        $query = "SELECT * FROM {$this->tableName} where id = $id;";
+    public function updateById($id, $array){
         
-        return Connection::execute($query);
     }
 
-    public function listUsers(){
-        $query = "SELECT * FROM {$this->tableName};";
+    public function insert($array){
+        $user = $this->usersModel;
+        $phone = $this->phonesModel;
+
+        $id_phone = $phone->insert([
+            "catalog_phone_id" => "1",
+            "number" => $array['PhoneNumber'],
+        ]);
         
-        return Connection::execute($query);
+        return $user->insertUser([
+            "FirstName" => "'test'",
+            "LastName" => "'test'", 
+            "Email" => "'Test@gmail.com'", 
+            "Password" => "\"Don\'t protected password\"",
+            "id_phone" => $id_phone
+        ]);
     }
 
-    public function consoleListUsers(){
-        foreach ($this->listUsers() as $row) {
+    public function get($id){
+        $t1 = $this->usersModel->tableName;
+        $t2 = $this->phonesModel->tableName;
+
+        $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1 and $t1.id = $id;";
+        
+        return \app\Models\MySQl\Connection::execute($query);
+    }
+
+    public function list(){
+        $t1 = $this->usersModel->tableName;
+        $t2 = $this->phonesModel->tableName;
+
+        $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1;";
+        
+        return \app\Models\MySQl\Connection::execute($query);
+    }
+
+    public function consoleList(){
+        foreach ($this->list() as $row) {
             foreach ($row as $column => $value) {
                 printf("%-10s: %s\n", $column, $value);
             }

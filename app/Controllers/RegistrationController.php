@@ -19,7 +19,7 @@ class RegistrationController {
 
         $values = self::parse($fullname, $lastname, $email, $phone, $password);
 
-        $result = $user->insertUser($values);
+        $result = $user->insert($values);
 
         return $result;
     }
@@ -30,7 +30,7 @@ class RegistrationController {
             "LastName" => "'$lastname'",
             "Email" => "'$email'",
             "Password" => "'$password'",
-            "id_phone" => $phone
+            "PhoneNumber" => $phone
         ];
     }
 }
