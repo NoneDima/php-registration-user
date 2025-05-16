@@ -1,5 +1,8 @@
 <?php
 
+use app\Controllers\RegistrationController;
+use app\Controllers\ValidationController;
+
 $obj_url = parse_url($_SERVER['REQUEST_URI']);
 
 function wrapper($file_path){
@@ -14,9 +17,14 @@ try {
             
             wrapper('app/Controllers/RegistrationController.php')();
 
-            \app\Controllers\RegistrationController::showLoginForm();
+            RegistrationController::showLoginForm();
         },
         '/welcome' => function() {
+            if (!isset($_COOKIE['auth_user'])) {
+                header("Location: registration");
+                exit();
+            }
+
             header('Content-Type: text/html; charset=UTF-8');
 
             wrapper('app/Views/Welcome/index.php')();
@@ -26,15 +34,16 @@ try {
             
             wrapper('app/Controllers/RegistrationController.php')();
 
-            \app\Controllers\RegistrationController::showRegistrationForm();
+            RegistrationController::showRegistrationForm();
         },
         '/auth' => function() {
             wrapper('app/Controllers/RegistrationController.php')();
+            wrapper('app/Controllers/ValidationController.php')();
 
             $email = $_POST["email"];
             $password = $_POST["password"];
 
-            $errors = \app\Controllers\ValidationController::validateAuthUser($email, $password);
+            $errors = ValidationController::validateAuthUser($email, $password);
 
             if(is_array($errors)){
                 header('Content-Type: text/json; charset=UTF-8');
@@ -43,9 +52,11 @@ try {
                 return false;
             }
 
-            \app\Controllers\RegistrationController::authenticateUser($email, $password);
+            $user = RegistrationController::authenticateUser($email, $password);
 
-            header('Location: http://localhost:9020/welcome');
+            setcookie('auth_user', $user['id'], time() + 3600, "/");
+
+            header('Location: welcome');
         },
         '/register' => function() {
             wrapper('app/Controllers/RegistrationController.php')();
@@ -57,7 +68,7 @@ try {
             $password = $_POST["password"];
             $phone = $_POST["phone"];
 
-            $errors = \app\Controllers\ValidationController::validateRegisterUser($fullname, $lastname, $email, $password, $phone);
+            $errors = ValidationController::validateRegisterUser($fullname, $lastname, $email, $password, $phone);
 
             if(is_array($errors)){
                 header('Content-Type: text/json; charset=UTF-8');
@@ -66,9 +77,11 @@ try {
                 return false;
             }
 
-            \app\Controllers\RegistrationController::registerUser($fullname, $lastname, $email, $password, $phone);
+            $id = RegistrationController::registerUser($fullname, $lastname, $email, $password, $phone);
 
-            header('Location: http://localhost:9020/welcome');
+            setcookie('auth_user', $id, time() + 3600, "/");
+
+            header('Location: welcome');
         },
         '/css/style.css' => function() {
             header('Content-Type: text/css; charset=UTF-8');

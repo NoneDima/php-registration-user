@@ -49,17 +49,25 @@ class Users {
         ]);
     }
 
-    private function hashPassword($password){
-        return md5($password);
-    }
-
-    public function get($id){
+    public function get($array){
         $t1 = $this->usersModel->tableName;
         $t2 = $this->phonesModel->tableName;
 
-        $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1 and $t1.id = $id;";
+        $email = $array["Email"];
+        $password = $this->hashPassword($array["Password"]);
+
+        $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1 and $t1.Email = ? and $t1.Password = ?;";
         
-        return Connection::execute($query);
+        return Connection::execute($query, [ $email, $password ]);
+    }
+
+    public function getById($id){
+        $t1 = $this->usersModel->tableName;
+        $t2 = $this->phonesModel->tableName;
+
+        $query = "SELECT $t1.id, $t1.FirstName, $t1.LastName, $t1.Email, $t1.Password, $t2.number FROM $t1 LEFT JOIN $t2 ON id_phone = $t2.id OR id_phone is NULL WHERE catalog_phone_id = 1 and $t1.id = ?;";
+        
+        return Connection::execute($query, [ $id ]);
     }
 
     public function list(){
@@ -78,5 +86,9 @@ class Users {
             }
             echo "\n";
         }
+    }
+    
+    private function hashPassword($password){
+        return md5($password);
     }
 }

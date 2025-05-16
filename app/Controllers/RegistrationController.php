@@ -25,16 +25,14 @@ class RegistrationController {
         return $result;
     }
 
-    public static function authenticateUser(){
+    public static function authenticateUser($email, $password){
         $user = new Users();
-        $email = $_POST["email"];
-        $password = $_POST["password"];
 
-        $values = self::parseLogin($fullname, $lastname, $email, $password, $phone);
+        $values = self::parseLogin($email, $password);
 
         $result = $user->get($values);
 
-        return $result;
+        return $result->fetch_assoc();
     }
 
     private static function parseLogin($email, $password){
